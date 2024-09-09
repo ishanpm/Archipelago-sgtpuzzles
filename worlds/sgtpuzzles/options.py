@@ -85,7 +85,8 @@ class CompletionPercentage(Range):
 
 class GenreWeights(OptionDict):
     """
-    Relative chance for each genre to be selected as a random preset. Remove a genre from this list to disable it.
+    Relative chance for each genre to be selected as a random preset. Remove a
+    genre from this list to disable it.
     """
     schema = Schema({
         Optional(g): Or(float, int) for g in genres
@@ -94,9 +95,10 @@ class GenreWeights(OptionDict):
 
 class PresetOverrides(OptionDict):
     """
-    List of presets to use for a given genre. Replaces the default presets for that puzzle if specified.
+    List of presets to use for a given genre. Replaces the default presets for
+    that puzzle if specified.
 
-    For example, to make Net puzzles always use wrapping grids, use:
+    For example, to make Net puzzles always use wrapping grids, add:
     net: [5x5w, 7x7w, 9x9w, 11x11w]
     """
     default = {}
