@@ -1,11 +1,11 @@
 from BaseClasses import Location
 import typing
-from .Items import max_puzzles
+from .items import max_puzzles
 
 
 class AdvData(typing.NamedTuple):
     id: int
-    region: str = "Board"
+    region: str = "Puzzles"
 
 
 class SimonTathamPuzzlesLocation(Location):

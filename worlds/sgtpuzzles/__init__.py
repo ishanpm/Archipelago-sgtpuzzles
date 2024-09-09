@@ -1,11 +1,11 @@
 import logging
+from math import ceil
 from BaseClasses import Item, Region, Entrance, Tutorial, ItemClassification
-from .Items import SimonTathamPuzzlesItem, item_table, max_puzzles
-from .Locations import SimonTathamPuzzlesLocation, advancement_table
+from .items import SimonTathamPuzzlesItem, item_table, max_puzzles
+from .locations import SimonTathamPuzzlesLocation, advancement_table
 from .options import SimonTathamPuzzlesOptions, genrePresets, sgtpuzzles_option_groups
-from .Rules import set_rules, set_completion_rules
+from .rules import set_rules, set_completion_rules
 from worlds.AutoWorld import World, WebWorld
-from collections import Counter
 
 client_version = 1
 
@@ -25,11 +25,15 @@ class SimonTathamPuzzlesWorld(World):
     options_dataclass = SimonTathamPuzzlesOptions
     web = SimonTathamPuzzlesWeb()
     puzzles: list[str]
+    solve_target: int
+    world_seed: int
 
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.id for name, data in advancement_table.items()}
 
     def generate_early(self):
+        self.world_seed = self.multiworld.random.getrandbits(32)
+
         # Generate list of puzzles
         puzzle_count = self.options.puzzle_count.value
         self.puzzles = []
@@ -46,13 +50,15 @@ class SimonTathamPuzzlesWorld(World):
 
             self.puzzles.append(new_puzzle)
 
+        self.solve_target = ceil(puzzle_count * (self.options.completion_percentage / 100))
+
     def create_regions(self):
         menu = Region("Menu", self.player, self.multiworld)
-        board = Region("Board", self.player, self.multiworld)
+        board = Region("Puzzles", self.player, self.multiworld)
         board.locations += [SimonTathamPuzzlesLocation(self.player, loc_name, loc_data.id, board)
                             for loc_name, loc_data in advancement_table.items()]
 
-        connection = Entrance(self.player, "New Board", menu)
+        connection = Entrance(self.player, "Get Puzzles", menu)
         menu.exits.append(connection)
         connection.connect(board)
         self.multiworld.regions += [menu, board]
@@ -92,18 +98,19 @@ class SimonTathamPuzzlesWorld(World):
         print(self.multiworld.precollected_items[self.player])
 
     def set_rules(self):
-        set_rules(self.multiworld, self.player, self.options, self.puzzles)
-        set_completion_rules(self.multiworld, self.player, self.options, self.puzzles)
+        set_rules(self.multiworld, self.player, self.puzzles)
+        set_completion_rules(self.multiworld, self.player, self.solve_target)
 
     def fill_slot_data(self):
         return {
-            "world_seed": self.random.getrandbits(32),
+            "world_seed": self.world_seed,
             "seed_name": self.multiworld.seed_name,
             "player_name": self.player_name,
             "player_id": self.player,
             "client_version": client_version,
             "race": self.multiworld.is_race,
-            "puzzles": self.puzzles
+            "puzzles": self.puzzles,
+            "solve_target": self.solve_target
         }
 
     def create_item(self, name: str) -> SimonTathamPuzzlesItem:
