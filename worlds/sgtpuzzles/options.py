@@ -7,7 +7,7 @@ from schema import Schema, Optional, And, Or, Any
 
 genres = [
     "blackbox","bridges","cube","dominosa","fifteen","filling","flip","flood","galaxies",
-    "guess","inertia","keen","lightup","loopy","magnets","map","mines","mosaic","net",
+    "group","guess","inertia","keen","lightup","loopy","magnets","map","mines","mosaic","net",
     "netslide","palisade","pattern","pearl","pegs","range","rect","samegame","signpost",
     "singles","sixteen","slant","solo","tents","towers","tracks","twiddle","undead",
     "unequal","unruly","untangle"
@@ -23,6 +23,7 @@ genrePresets = {
     "flip": ["3x3c","4x4c","5x5c","3x3r"],
     "flood": ["12x12c6m5"],
     "galaxies": ["7x7dn"],
+    "group": ["6dn","6dni"],
     "guess": ["c6p4g10Bm"],
     "inertia": ["10x8"],
     "keen": ["4de"],
@@ -67,7 +68,7 @@ class PuzzleCount(Range):
 class StartingPuzzles(Range):
     """
     Number of puzzles to randomly add to the starting inventory. These will be
-    removed from the item pool (along with those in Start Inventory).
+    removed from the item pool.
     """
     range_start = 0
     range_end = 20
@@ -78,22 +79,25 @@ class CompletionPercentage(Range):
     Percent of puzzles which must be completed to finish the world, rounding up.
     """
     display_name = "Target Completion Percentage"
-    range_start = 50
+    range_start = 20
     range_end = 100
     default = 90
 
 class GenreWeights(OptionDict):
     """
-    Relative chance for each genre to be selected as a random preset.
+    Relative chance for each genre to be selected as a random preset. Remove a genre from this list to disable it.
     """
     schema = Schema({
         Optional(g): Or(float, int) for g in genres
     })
-    default = {g: 10 for g in genres}
+    default = {g: 10 for g in genres if g != "group"} # it's a secret :P
 
 class PresetOverrides(OptionDict):
     """
     List of presets to use for a given genre. Replaces the default presets for that puzzle if specified.
+
+    For example, to make Net puzzles always use wrapping grids, use:
+    net: [5x5w, 7x7w, 9x9w, 11x11w]
     """
     default = {}
 

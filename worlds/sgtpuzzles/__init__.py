@@ -42,12 +42,14 @@ class SimonTathamPuzzlesWorld(World):
         genres = self.multiworld.random.choices(list(genre_weights.keys()), (genre_weights.values()), k=puzzle_count)
 
         for i in range(puzzle_count):
-            if genres[i] in genrePresets:
-                preset = self.multiworld.random.choice(genrePresets[genres[i]])
-                new_puzzle = f"{genres[i]}:{preset}"
+            if genres[i] in self.options.preset_overrides:
+                presets = self.options.preset_overrides[genres[i]]
             else:
-                new_puzzle = genres[i]
+                presets = genrePresets[genres[i]]
 
+            preset = self.multiworld.random.choice(presets)
+
+            new_puzzle = f"{genres[i]}:{preset}"
             self.puzzles.append(new_puzzle)
 
         self.solve_target = ceil(puzzle_count * (self.options.completion_percentage / 100))
