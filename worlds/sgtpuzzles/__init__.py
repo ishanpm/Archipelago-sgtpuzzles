@@ -56,14 +56,18 @@ class SimonTathamPuzzlesWorld(World):
 
     def create_regions(self):
         menu = Region("Menu", self.player, self.multiworld)
-        board = Region("Puzzles", self.player, self.multiworld)
-        board.locations += [SimonTathamPuzzlesLocation(self.player, loc_name, loc_data.id, board)
-                            for loc_name, loc_data in advancement_table.items()]
+        region = Region("Puzzles", self.player, self.multiworld)
+
+        for i in range(len(self.puzzles)):
+            loc_name = f"Puzzle {i+1} Reward"
+            loc_data = advancement_table[loc_name]
+            new_location = SimonTathamPuzzlesLocation(self.player, loc_name, loc_data.id, region)
+            region.locations.append(new_location)
 
         connection = Entrance(self.player, "Get Puzzles", menu)
         menu.exits.append(connection)
-        connection.connect(board)
-        self.multiworld.regions += [menu, board]
+        connection.connect(region)
+        self.multiworld.regions += [menu, region]
 
     def create_filler(self) -> Item:
         return self.create_item("Filler")
@@ -87,13 +91,13 @@ class SimonTathamPuzzlesWorld(World):
         extra_starting_items = self.multiworld.random.sample(itempool, starting_item_count)
 
         for item in extra_starting_items:
-            #itempool.remove(item)
+            itempool.remove(item)
             self.multiworld.push_precollected(self.create_item(item))
 
         # Add remaining items and filler
         self.multiworld.itempool += [self.create_item(itemname) for itemname in itempool]
 
-        filler_items = len(advancement_table) - len(itempool)
+        filler_items = len(self.puzzles) - len(itempool)
         self.multiworld.itempool += [self.create_filler() for _ in range(filler_items)]
 
         print(itempool)

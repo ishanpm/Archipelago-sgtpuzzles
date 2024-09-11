@@ -10,8 +10,6 @@ def set_rules(multiworld: MultiWorld, player: int, puzzles: list[str]):
     for i in range(200):
         if i < len(puzzles):
             set_rule(multiworld.get_location(f"Puzzle {i+1} Reward", player), lambda state, i=i: state.has(f"Puzzle {i+1}", player, 1))
-        else:
-            multiworld.get_location(f"Puzzle {i+1} Reward", player).progress_type = LocationProgressType.EXCLUDED
 
 
 # Sets rules on completion condition
