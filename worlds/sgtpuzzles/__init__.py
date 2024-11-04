@@ -5,6 +5,7 @@ from .items import SimonTathamPuzzlesItem, item_table, max_puzzles
 from .locations import SimonTathamPuzzlesLocation, advancement_table
 from .options import SimonTathamPuzzlesOptions, genrePresets, sgtpuzzles_option_groups
 from .rules import set_rules, set_completion_rules
+from .randomizer import PuzzleRandomizer
 from worlds.AutoWorld import World, WebWorld
 
 client_version = 1
@@ -36,23 +37,38 @@ class SimonTathamPuzzlesWorld(World):
 
         # Generate list of puzzles
         puzzle_count = self.options.puzzle_count.value
-        self.puzzles = []
-        genre_weights = self.options.genre_weights
+        default_genre_weight = self.options.genre_weights.get("all", 0)
 
-        genres = self.multiworld.random.choices(list(genre_weights.keys()), (genre_weights.values()), k=puzzle_count)
+        puzzle_randomizer = PuzzleRandomizer(
+            count=puzzle_count,
+            random=self.multiworld.random,
+            builtin_presets=genrePresets,
+            preset_overrides=self.options.preset_overrides,
+            min_difficulty=min(self.options.min_difficulty, self.options.max_difficulty),
+            max_difficulty=self.options.max_difficulty)
 
-        for i in range(puzzle_count):
-            if genres[i] in self.options.preset_overrides:
-                presets = self.options.preset_overrides[genres[i]]
-            else:
-                presets = genrePresets[genres[i]]
+        for genre in genrePresets:
+            weight = self.options.genre_weights.get(genre, default_genre_weight if genre != "group" else 0)
+            if weight > 0:
+                puzzle_randomizer.entries.append(genre)
+                puzzle_randomizer.weights.append(weight)
 
-            preset = self.multiworld.random.choice(presets)
+        self.puzzles = puzzle_randomizer.evaluate()
 
-            new_puzzle = f"{genres[i]}:{preset}"
-            self.puzzles.append(new_puzzle)
+        # genres = self.multiworld.random.choices(list(genre_weights.keys()), (genre_weights.values()), k=puzzle_count)
 
-        self.solve_target = ceil(puzzle_count * (self.options.completion_percentage / 100))
+        # for i in range(puzzle_count):
+        #     if genres[i] in self.options.preset_overrides:
+        #         presets = self.options.preset_overrides[genres[i]]
+        #     else:
+        #         presets = genrePresets[genres[i]]
+
+        #     preset = self.multiworld.random.choice(presets)
+
+        #     new_puzzle = f"{genres[i]}:{preset}"
+        #     self.puzzles.append(new_puzzle)
+
+        self.solve_target = ceil(len(self.puzzles) * (self.options.completion_percentage / 100))
 
     def create_regions(self):
         menu = Region("Menu", self.player, self.multiworld)

@@ -13,9 +13,53 @@ genres = [
     "unequal","unruly","untangle"
 ]
 
+# Each genre lists tuples specifying a parameter string, its weight, and its difficulty.
 genrePresets = {
-    "blackbox": ["w8h8m5M5"],
-    "bridges": ["7x7i30e10m2d0"],
+    "blackbox": [
+        ("w5h5m3M3", 1, 0),
+        ("w8h8m5M5", 1, 1),
+        ("w8h8m3M6", 1, 1),
+        ("w10h10m5M5", 1, 2),
+        ("w10h10m4M10", 1, 2)
+    ],
+    "bridges": [
+        ("7x7i30e10m2d0", 1, 0),
+        ("7x7i30e10m2d1", 1, 0),
+        ("7x7i30e10m2d2", 1, 1),
+        ("10x10i30e10m2d0", 1, 0),
+        ("10x10i30e10m2d1", 1, 1),
+    ],
+    "loopy": [
+        ("7x7t0de", 1, 0),
+        ("10x10t0de", 1, 1),
+        ("7x7t0dn", 1, 1),
+        ("10x10t0dn", 1, 1),
+        ("7x7t0dh", 1, 2),
+        ("10x10t0dh", 1, 2),
+        ("12x10t1dh", 1/18, 2),
+        ("7x7t3dh", 1/18, 2),
+        ("9x9t4dh", 1/18, 2),
+        ("5x5t7dh", 1/18, 2),
+        ("10x10t11dh", 1/18, 2),
+        ("10x10t12dh", 1/18, 2),
+        ("10x10t2dh", 1/18, 2),
+        ("5x4t5dh", 1/18, 2),
+        ("5x4t14dh", 1/18, 2),
+        ("7x7t6dh", 1/18, 2),
+        ("5x5t8dh", 1/18, 2),
+        ("5x4t9dh", 1/18, 2),
+        ("5x4t9dh", 1/18, 2),
+        ("5x4t10dh", 1/18, 2),
+        ("5x3t13dh", 1/18, 2),
+        ("5x4t15dh", 1/18, 2),
+        ("10x10t16dh", 1/18, 2),
+        ("10x10t18dh", 1/18, 2),
+    ]
+}
+
+# For debugging
+
+oldGenrePresets = {
     "cube": ["c4x4"],
     "dominosa": ["3dt"],
     "fifteen": ["2x2","3x3","4x4"],
@@ -57,6 +101,10 @@ genrePresets = {
     "untangle": ["6","10"]
 }
 
+for genre in oldGenrePresets:
+    if genre not in genrePresets:
+        genrePresets[genre] = [(entry, 1, 1) for entry in oldGenrePresets[genre]]
+
 class PuzzleCount(Range):
     """
     Number of puzzles to randomly generate.
@@ -77,16 +125,36 @@ class StartingPuzzles(Range):
 class CompletionPercentage(Range):
     """
     Percent of puzzles which must be completed to finish the world, rounding up.
+
+    If you set this to a low value, it is HIGHLY RECOMMENDED to disable release on world completion.
     """
     display_name = "Target Completion Percentage"
-    range_start = 20
+    range_start = 10
     range_end = 100
     default = 90
 
+class MinimumDifficulty(Choice):
+    """
+    Minimum difficulty to select generated presets from. Note that not all genres have presets at "Hard" difficulty.
+    """
+    default = 0
+    option_easy = 0
+    option_normal = 1
+    option_hard = 2
+
+class MaximumDifficulty(Choice):
+    """
+    Maximum difficulty to select generated presets from. Takes priority over the Minimum Difficulty option.
+    """
+    default = 1
+    option_easy = 0
+    option_normal = 1
+    option_hard = 2
+
 class GenreWeights(OptionDict):
     """
-    Relative chance for each genre to be selected as a random preset. Remove a
-    genre from this list to disable it.
+    Relative chance for each genre to be selected as a random preset. Set a genre's
+    weight to 0 to remove it.
     """
     schema = Schema({
         Optional(g): Or(float, int) for g in genres
@@ -118,6 +186,8 @@ class SimonTathamPuzzlesOptions(CommonOptions):
     puzzle_count: PuzzleCount
     starting_puzzles: StartingPuzzles
     completion_percentage: CompletionPercentage
+    min_difficulty: MinimumDifficulty
+    max_difficulty: MaximumDifficulty
     genre_weights: GenreWeights
     preset_overrides: PresetOverrides
 

@@ -2,7 +2,7 @@ from BaseClasses import Item
 import typing
 
 base_id = 925000
-max_puzzles = 200
+max_puzzles = 2000
 
 class ItemData(typing.NamedTuple):
     code: int
