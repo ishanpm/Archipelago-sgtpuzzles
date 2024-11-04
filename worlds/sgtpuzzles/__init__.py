@@ -43,11 +43,11 @@ class SimonTathamPuzzlesWorld(World):
             count=puzzle_count,
             random=self.multiworld.random,
             builtin_presets=genrePresets,
-            preset_overrides=self.options.preset_overrides,
-            min_difficulty=min(self.options.min_difficulty, self.options.max_difficulty),
-            max_difficulty=self.options.max_difficulty,
-            genre_min_difficulty=self.options.genre_min_difficulty,
-            genre_max_difficulty=self.options.genre_max_difficulty)
+            preset_overrides=self.options.preset_overrides.value,
+            min_difficulty=min(self.options.min_difficulty.value, self.options.max_difficulty.value),
+            max_difficulty=self.options.max_difficulty.value,
+            genre_min_difficulty=self.options.genre_min_difficulty.value,
+            genre_max_difficulty=self.options.genre_max_difficulty.value)
 
         for genre in genrePresets:
             weight = self.options.genre_weights.get(genre, default_genre_weight if genre != "group" else 0)
