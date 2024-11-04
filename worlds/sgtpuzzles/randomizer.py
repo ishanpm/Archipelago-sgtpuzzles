@@ -14,7 +14,9 @@ class PuzzleRandomizer:
             min_count: int = None,
             max_count: int = None,
             min_difficulty: int = 0,
-            max_difficulty: int = 2
+            max_difficulty: int = 2,
+            genre_min_difficulty: dict[int] = {},
+            genre_max_difficulty: dict[int] = {},
             ):
         self.entries: list[str|PuzzleRandomizer] = entries
         self.weights: list[float|int] = weights if weights is not None else [(elem.selfweight if elem is PuzzleRandomizer else 1) for elem in self.entries]
@@ -28,6 +30,8 @@ class PuzzleRandomizer:
 
         self.min_difficulty: int = min_difficulty
         self.max_difficulty: int = max_difficulty
+        self.genre_min_difficulty: dict[int] = genre_min_difficulty,
+        self.genre_max_difficulty: dict[int] = genre_max_difficulty,
 
         self.builtin_presets: dict[str,list[tuple[str, int, int]]] = builtin_presets
         self.preset_overrides: dict[str,list[str]|dict[str,int]] = preset_overrides
@@ -83,7 +87,18 @@ class PuzzleRandomizer:
                     result[genre] = (list(genreEntries.keys()), list(genreEntries.values()))
             else:
                 genre_presets = self.builtin_presets[genre]
-                is_valid = [self.min_difficulty <= entry[2] <= self.max_difficulty for entry in genre_presets]
+                max_difficulty = self.max_difficulty
+                min_difficulty = self.min_difficulty
+
+                if genre in self.genre_min_difficulty:
+                    min_difficulty = self.genre_min_difficulty[genre]
+                    max_difficulty = max(min_difficulty, max_difficulty)
+
+                if genre in self.genre_max_difficulty:
+                    max_difficulty = self.genre_max_difficulty[genre]
+                    min_difficulty = min(min_difficulty, max_difficulty)
+
+                is_valid = [min_difficulty <= entry[2] <= max_difficulty for entry in genre_presets]
                 entries = [genre_presets[i][0] for i in range(len(genre_presets)) if is_valid[i]]
                 weights = [genre_presets[i][1] for i in range(len(genre_presets)) if is_valid[i]]
 
