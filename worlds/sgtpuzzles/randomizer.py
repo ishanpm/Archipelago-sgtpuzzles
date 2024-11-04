@@ -104,8 +104,6 @@ class PuzzleRandomizer:
 
                 result[genre] = (entries, weights)
 
-        print(result)
-
         return result
 
     def _get_random_preset(self, spec: str, usable_presets):
