@@ -118,9 +118,6 @@ class SimonTathamPuzzlesWorld(World):
         filler_items = len(self.puzzles) - len(itempool)
         self.multiworld.itempool += [self.create_filler() for _ in range(filler_items)]
 
-        print(itempool)
-        print(self.multiworld.precollected_items[self.player])
-
     def set_rules(self):
         set_rules(self.multiworld, self.player, self.puzzles)
         set_completion_rules(self.multiworld, self.player, self.solve_target)
