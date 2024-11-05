@@ -422,7 +422,7 @@ class CompletionPercentage(Range):
     display_name = "Target Completion Percentage"
     range_start = 10
     range_end = 100
-    default = 90
+    default = 80
 
 class MinimumDifficulty(Choice):
     """
