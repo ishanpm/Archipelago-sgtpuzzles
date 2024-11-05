@@ -449,7 +449,7 @@ class MaximumDifficulty(Choice):
 class GenreWeights(OptionDict):
     """
     Relative chance for each genre to be selected as a random preset. Set a genre's
-    weight to 0 to remove it.
+    weight to 0 or remove it from this list to disable it.
     """
     schema = Schema({
         Optional(g): Or(float, int) for g in genres
