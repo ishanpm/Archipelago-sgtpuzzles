@@ -21,6 +21,6 @@ class SimonTathamPuzzlesItem(Item):
 # }
 
 item_table = {f"Puzzle {i+1}": ItemData(base_id+i) for i in range(max_puzzles)}
-item_table["Filler"] = ItemData(max_puzzles, False)
+item_table["Filler"] = ItemData(base_id+max_puzzles, False)
 
 lookup_id_to_name: typing.Dict[int, str] = {data.code: item_name for item_name, data in item_table.items()}
