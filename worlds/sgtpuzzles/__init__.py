@@ -8,7 +8,7 @@ from .rules import set_rules, set_completion_rules
 from .randomizer import PuzzleRandomizer
 from worlds.AutoWorld import World, WebWorld
 
-client_version = 1
+client_version = 2
 
 
 class SimonTathamPuzzlesWeb(WebWorld):
@@ -82,6 +82,11 @@ class SimonTathamPuzzlesWorld(World):
             new_location = SimonTathamPuzzlesLocation(self.player, loc_name, loc_data.id, region)
             region.locations.append(new_location)
 
+            loc_name = f"Puzzle {i+1} Reward 2"
+            loc_data = advancement_table[loc_name]
+            new_location = SimonTathamPuzzlesLocation(self.player, loc_name, loc_data.id, region)
+            region.locations.append(new_location)
+
         connection = Entrance(self.player, "Get Puzzles", menu)
         menu.exits.append(connection)
         connection.connect(region)
@@ -117,6 +122,11 @@ class SimonTathamPuzzlesWorld(World):
 
         filler_items = len(self.puzzles) - len(itempool)
         self.multiworld.itempool += [self.create_filler() for _ in range(filler_items)]
+
+    def pre_fill(self):
+        for i in range(len(self.puzzles)):
+            item = self.create_item("Checkmark")
+            self.multiworld.get_location(f"Puzzle {i+1} Reward", self.player).place_locked_item(item)
 
     def set_rules(self):
         set_rules(self.multiworld, self.player, self.puzzles)
