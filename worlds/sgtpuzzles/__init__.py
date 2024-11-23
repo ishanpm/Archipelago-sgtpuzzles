@@ -1,6 +1,7 @@
 import logging
 from math import ceil
 from BaseClasses import Item, Region, Entrance, Tutorial, ItemClassification
+from Options import OptionError
 from .items import SimonTathamPuzzlesItem, item_table, max_puzzles
 from .locations import SimonTathamPuzzlesLocation, advancement_table
 from .options import SimonTathamPuzzlesOptions, genrePresets, sgtpuzzles_option_groups
@@ -48,6 +49,10 @@ class SimonTathamPuzzlesWorld(World):
             max_difficulty=self.options.max_difficulty.value,
             genre_min_difficulty=self.options.genre_min_difficulty.value,
             genre_max_difficulty=self.options.genre_max_difficulty.value)
+
+        invalid_weights = [genre for genre in self.options.genre_weights if genre not in genrePresets]
+        if invalid_weights:
+            raise OptionError(f"Unknown weights in genre_weights: {invalid_weights}")
 
         for genre in genrePresets:
             weight = self.options.genre_weights.get(genre, default_genre_weight if genre != "group" else 0)
