@@ -362,7 +362,7 @@ genrePresets = {
         ("5x5n3", 1, 2),
         ("6x6n4", 1, 2),
     ],
-    "twiddle": [
+    "undead": [
         ("4x4de", 1, 0),
         ("4x4dn", 1, 1),
         ("4x4dt", 1, 1),
