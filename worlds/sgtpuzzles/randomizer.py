@@ -6,7 +6,7 @@ class PuzzleRandomizer:
             builtin_presets: dict[str, list[tuple[str, int, int]]],
             preset_overrides: dict[str, list[str]|dict[str, int]],
             random: Random,
-            entries: list = [],
+            entries: list = None,
             weights: list[float|int] = None,
             selfweight: float|int = 1,
             mode: str = "default",
@@ -15,10 +15,10 @@ class PuzzleRandomizer:
             max_count: int = None,
             min_difficulty: int = 0,
             max_difficulty: int = 2,
-            genre_min_difficulty: dict[str, int] = {},
-            genre_max_difficulty: dict[str, int] = {},
+            genre_min_difficulty: dict[str, int] = None,
+            genre_max_difficulty: dict[str, int] = None,
             ):
-        self.entries: list[str|PuzzleRandomizer] = entries
+        self.entries: list[str|PuzzleRandomizer] = entries if entries is not None else []
         self.weights: list[float|int] = weights if weights is not None else [(elem.selfweight if elem is PuzzleRandomizer else 1) for elem in self.entries]
         self.selfweight: float|int = selfweight
 
@@ -30,8 +30,8 @@ class PuzzleRandomizer:
 
         self.min_difficulty: int = min_difficulty
         self.max_difficulty: int = max_difficulty
-        self.genre_min_difficulty: dict[str, int] = genre_min_difficulty
-        self.genre_max_difficulty: dict[str, int] = genre_max_difficulty
+        self.genre_min_difficulty: dict[str, int] = genre_min_difficulty if genre_min_difficulty is not None else {}
+        self.genre_max_difficulty: dict[str, int] = genre_max_difficulty if genre_max_difficulty is not None else {}
 
         self.builtin_presets: dict[str,list[tuple[str, int, int]]] = builtin_presets
         self.preset_overrides: dict[str,list[str]|dict[str,int]] = preset_overrides

@@ -32,6 +32,14 @@ class SimonTathamPuzzlesWorld(World):
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.id for name, data in advancement_table.items()}
 
+    item_name_groups = {
+        "Puzzle": {f"Puzzle {i+1}" for i in range(max_puzzles)}
+    }
+
+    location_name_groups = {
+        "Puzzle Reward": {f"Puzzle {i+1} Reward" for i in range(max_puzzles)}
+    }
+
     def generate_early(self):
         self.world_seed = self.multiworld.random.getrandbits(32)
 
@@ -82,11 +90,6 @@ class SimonTathamPuzzlesWorld(World):
             new_location = SimonTathamPuzzlesLocation(self.player, loc_name, loc_data.id, region)
             region.locations.append(new_location)
 
-            loc_name = f"Puzzle {i+1} Reward 2"
-            loc_data = advancement_table[loc_name]
-            new_location = SimonTathamPuzzlesLocation(self.player, loc_name, loc_data.id, region)
-            region.locations.append(new_location)
-
         connection = Entrance(self.player, "Get Puzzles", menu)
         menu.exits.append(connection)
         connection.connect(region)
@@ -123,10 +126,10 @@ class SimonTathamPuzzlesWorld(World):
         filler_items = len(self.puzzles) - len(itempool)
         self.multiworld.itempool += [self.create_filler() for _ in range(filler_items)]
 
-    def pre_fill(self):
-        for i in range(len(self.puzzles)):
-            item = self.create_item("Checkmark")
-            self.multiworld.get_location(f"Puzzle {i+1} Reward", self.player).place_locked_item(item)
+    # def pre_fill(self):
+    #     for i in range(len(self.puzzles)):
+    #         item = self.create_item("Checkmark")
+    #         self.multiworld.get_location(f"Puzzle {i+1} Reward", self.player).place_locked_item(item)
 
     def set_rules(self):
         set_rules(self.multiworld, self.player, self.puzzles)
