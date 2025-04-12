@@ -497,6 +497,8 @@ sgtpuzzles_option_groups = [
         PuzzleCount,
         StartingPuzzles,
         CompletionPercentage,
+        MinimumDifficulty,
+        MaximumDifficulty,
         GenreWeights,
         PresetOverrides,
         GenreMinimumDifficulty,
