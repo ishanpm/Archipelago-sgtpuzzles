@@ -8,8 +8,8 @@ from .rules import set_rules, set_completion_rules
 from .randomizer import PuzzleRandomizer
 from worlds.AutoWorld import World, WebWorld
 
-client_version = 2
-world_version = "0.2.0"
+file_version = 1
+world_version = "0.1.7"
 
 class SimonTathamPuzzlesWeb(WebWorld):
     option_groups = sgtpuzzles_option_groups
@@ -141,7 +141,7 @@ class SimonTathamPuzzlesWorld(World):
             "seed_name": self.multiworld.seed_name,
             "player_name": self.player_name,
             "player_id": self.player,
-            "client_version": client_version,
+            "file_version": file_version,
             "world_version": world_version,
             "race": self.multiworld.is_race,
             "puzzles": self.puzzles,
