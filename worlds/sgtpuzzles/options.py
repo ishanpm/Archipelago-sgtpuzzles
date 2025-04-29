@@ -1,10 +1,9 @@
-from Options import Choice, CommonOptions, DefaultOnToggle, ExcludeLocations, ItemLinks, LocalItems, \
-    NonLocalItems, OptionGroup, PriorityLocations, StartHints, StartInventory, StartLocationHints, Toggle, Range, \
-    OptionDict, StartInventoryPool
+from Options import Choice, OptionGroup, Range, \
+    OptionDict, StartInventoryPool, PerGameCommonOptions
 from dataclasses import dataclass
 from .items import max_puzzles
 
-from schema import Schema, Optional, And, Or, Any
+from schema import Schema, Optional, Or
 
 genres = [
     "blackbox","bridges","cube","dominosa","fifteen","filling","flip","flood","galaxies",
@@ -493,7 +492,7 @@ class PresetOverrides(OptionDict):
     default = {}
 
 sgtpuzzles_option_groups = [
-    OptionGroup("Game Options", [
+    OptionGroup("Puzzle Options", [
         PuzzleCount,
         StartingPuzzles,
         CompletionPercentage,
@@ -507,7 +506,7 @@ sgtpuzzles_option_groups = [
 ]
 
 @dataclass
-class SimonTathamPuzzlesOptions(CommonOptions):
+class SimonTathamPuzzlesOptions(PerGameCommonOptions):
     puzzle_count: PuzzleCount
     starting_puzzles: StartingPuzzles
     completion_percentage: CompletionPercentage
@@ -518,11 +517,4 @@ class SimonTathamPuzzlesOptions(CommonOptions):
     genre_max_difficulty: GenreMaximumDifficulty
     preset_overrides: PresetOverrides
 
-    local_items: LocalItems
-    non_local_items: NonLocalItems
-    start_inventory: StartInventoryPool
-    start_hints: StartHints
-    start_location_hints: StartLocationHints
-    exclude_locations: ExcludeLocations
-    priority_locations: PriorityLocations
-    item_links: ItemLinks
+    start_inventory_pool: StartInventoryPool
