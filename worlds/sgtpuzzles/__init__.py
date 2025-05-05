@@ -9,7 +9,7 @@ from .randomizer import PuzzleRandomizer
 from worlds.AutoWorld import World, WebWorld
 
 file_version = 1
-world_version = "0.1.7"
+world_version = "0.1.8"
 
 class SimonTathamPuzzlesWeb(WebWorld):
     option_groups = sgtpuzzles_option_groups
