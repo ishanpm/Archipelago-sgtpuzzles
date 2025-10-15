@@ -40,7 +40,7 @@ class PuzzleRandomizer:
     def evaluate(self) -> list[str]:
         usable_presets = self._get_usable_presets()
 
-        is_invalid_entry = [isinstance(entry, str) and ("#" not in entry) and (len(usable_presets[entry][0]) == 0) for entry in self.entries]
+        is_invalid_entry = [isinstance(entry, str) and (":" not in entry) and (len(usable_presets[entry][0]) == 0) for entry in self.entries]
 
         entries = [self.entries[i] for i in range(len(self.entries)) if not is_invalid_entry[i]]
         weights = [self.weights[i] for i in range(len(self.weights)) if not is_invalid_entry[i]]
@@ -74,7 +74,7 @@ class PuzzleRandomizer:
                 result = result + newPuzzles
 
         return result
-    
+
     def _get_usable_presets(self):
         result = {}
 
@@ -107,7 +107,7 @@ class PuzzleRandomizer:
         return result
 
     def _get_random_preset(self, spec: str, usable_presets):
-        if "#" in spec:
+        if ":" in spec:
             return spec
 
         genre_presets = usable_presets[spec]

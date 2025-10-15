@@ -1,5 +1,5 @@
 from Options import Choice, OptionGroup, Range, \
-    OptionDict, StartInventoryPool, PerGameCommonOptions
+    OptionDict, StartInventoryPool, PerGameCommonOptions, OptionList
 from dataclasses import dataclass
 from .items import max_puzzles
 
@@ -46,8 +46,8 @@ genrePresets = {
         ("7db", 1, 2),
         ("8db", 1, 2),
         ("9db", 1, 2),
-        ("6dt", 1, 2),
-        ("6dt", 1, 2)
+        ("6dh", 1, 2),
+        ("6de", 1, 2)
     ],
     "fifteen": [
         ("3x3", 1, 0),
@@ -491,6 +491,15 @@ class PresetOverrides(OptionDict):
     """
     default = {}
 
+class FixedPuzzles(OptionList):
+    """
+    List of additional puzzles to include. These puzzles will be placed at the start of the list.
+    The remaining list (up to puzzle_count) will be filled according to genre_weights.
+
+    You can specify by genre (net), parameter string (net:2x2), seed (net:2x2#12345), or ID (net:2x2:c494).
+    """
+    default = []
+
 sgtpuzzles_option_groups = [
     OptionGroup("Puzzle Options", [
         PuzzleCount,
@@ -501,7 +510,8 @@ sgtpuzzles_option_groups = [
         GenreWeights,
         PresetOverrides,
         GenreMinimumDifficulty,
-        GenreMaximumDifficulty
+        GenreMaximumDifficulty,
+        FixedPuzzles
     ])
 ]
 
@@ -516,5 +526,6 @@ class SimonTathamPuzzlesOptions(PerGameCommonOptions):
     genre_min_difficulty: GenreMinimumDifficulty
     genre_max_difficulty: GenreMaximumDifficulty
     preset_overrides: PresetOverrides
+    fixed_puzzles: FixedPuzzles
 
     start_inventory_pool: StartInventoryPool

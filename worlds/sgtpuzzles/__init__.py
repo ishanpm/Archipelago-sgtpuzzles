@@ -45,17 +45,30 @@ class SimonTathamPuzzlesWorld(World):
 
         # Generate list of puzzles
         puzzle_count = self.options.puzzle_count.value
+        fixed_puzzles = self.options.fixed_puzzles.value[:puzzle_count]
+        fixed_puzzle_count = len(fixed_puzzles)
         default_genre_weight = self.options.genre_weights.get("all", 0)
 
+        randomizer_options = {
+            "random": self.multiworld.random,
+            "builtin_presets": genrePresets,
+            "preset_overrides": self.options.preset_overrides.value,
+            "min_difficulty": min(self.options.min_difficulty.value, self.options.max_difficulty.value),
+            "max_difficulty": self.options.max_difficulty.value,
+            "genre_min_difficulty": self.options.genre_min_difficulty.value,
+            "genre_max_difficulty": self.options.genre_max_difficulty.value
+        }
+        
+        fixed_puzzles = PuzzleRandomizer(
+            count = fixed_puzzle_count,
+            entries = fixed_puzzles,
+            mode = "exact",
+            **randomizer_options)
+
         puzzle_randomizer = PuzzleRandomizer(
-            count=puzzle_count,
-            random=self.multiworld.random,
-            builtin_presets=genrePresets,
-            preset_overrides=self.options.preset_overrides.value,
-            min_difficulty=min(self.options.min_difficulty.value, self.options.max_difficulty.value),
-            max_difficulty=self.options.max_difficulty.value,
-            genre_min_difficulty=self.options.genre_min_difficulty.value,
-            genre_max_difficulty=self.options.genre_max_difficulty.value)
+            count = puzzle_count - fixed_puzzle_count,
+            mode = "default",
+            **randomizer_options)
 
         for genre in genrePresets:
             weight = self.options.genre_weights.get(genre, default_genre_weight if genre != "group" else 0)
@@ -63,7 +76,16 @@ class SimonTathamPuzzlesWorld(World):
                 puzzle_randomizer.entries.append(genre)
                 puzzle_randomizer.weights.append(weight)
 
-        self.puzzles = puzzle_randomizer.evaluate()
+        puzzles_overall = PuzzleRandomizer(
+            count = puzzle_count - fixed_puzzle_count,
+            entries = [fixed_puzzles, puzzle_randomizer],
+            mode = "exact",
+            **randomizer_options)
+
+        self.puzzles = puzzles_overall.evaluate()
+
+        print(self.puzzles)
+        input()
 
         # genres = self.multiworld.random.choices(list(genre_weights.keys()), (genre_weights.values()), k=puzzle_count)
 
