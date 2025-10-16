@@ -77,15 +77,12 @@ class SimonTathamPuzzlesWorld(World):
                 puzzle_randomizer.weights.append(weight)
 
         puzzles_overall = PuzzleRandomizer(
-            count = puzzle_count - fixed_puzzle_count,
+            count = puzzle_count,
             entries = [fixed_puzzles, puzzle_randomizer],
             mode = "exact",
             **randomizer_options)
 
         self.puzzles = puzzles_overall.evaluate()
-
-        print(self.puzzles)
-        input()
 
         # genres = self.multiworld.random.choices(list(genre_weights.keys()), (genre_weights.values()), k=puzzle_count)
 
